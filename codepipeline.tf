@@ -293,11 +293,13 @@ resource "aws_codepipeline" "main" {
       configuration = {
         ApplicationName = aws_codedeploy_app.ec2_app.name
         DeploymentGroupName = aws_codedeploy_deployment_group.ec2_deployment_group.deployment_group_name
+        RevisionType = "S3"
+        S3Location = "build_output"
       }
     }
 
     action {
-      name            = "Deploy-Lambda"
+      name            = "Deploy-Lambda-Contacts"
       category        = "Deploy"
       owner           = "AWS"
       provider        = "Lambda"
@@ -306,11 +308,26 @@ resource "aws_codepipeline" "main" {
 
       configuration = {
         FunctionName = "migrationai-contacts"
+        UserParameters = "{\"ImageUri\":\"${aws_ecr_repository.worker_contacts.repository_url}:latest\"}"
       }
     }
 
     action {
-      name            = "Deploy-AppRunner"
+      name            = "Deploy-Lambda-Projects"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "Lambda"
+      input_artifacts = ["build_output"]
+      version         = "1"
+
+      configuration = {
+        FunctionName = "migrationai-projects"
+        UserParameters = "{\"ImageUri\":\"${aws_ecr_repository.worker_projects.repository_url}:latest\"}"
+      }
+    }
+
+    action {
+      name            = "Deploy-AppRunner-Frontend"
       category        = "Deploy"
       owner           = "AWS"
       provider        = "AppRunner"
@@ -319,6 +336,19 @@ resource "aws_codepipeline" "main" {
 
       configuration = {
         ServiceName = "migrationai-frontend"
+      }
+    }
+
+    action {
+      name            = "Deploy-AppRunner-Admin"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "AppRunner"
+      input_artifacts = ["build_output"]
+      version         = "1"
+
+      configuration = {
+        ServiceName = "migrationai-admin-frontend"
       }
     }
   }

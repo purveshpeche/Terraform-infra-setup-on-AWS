@@ -152,9 +152,16 @@ phases:
       # Create deployment files for different targets
       - echo Creating deployment files...
       
+      # Create deployment directory
+      - mkdir -p deployment
+      
+      # Copy deployment scripts
+      - cp scripts/*.sh deployment/
+      - chmod +x deployment/*.sh
+      
       # Create appspec.yml for CodeDeploy (EC2)
       - |
-        cat > appspec.yml << 'EOF'
+        cat > deployment/appspec.yml << 'EOF'
         version: 0.0
         os: linux
         files:
@@ -179,9 +186,68 @@ phases:
               runas: root
         EOF
       
+      # Create docker-compose.yml for deployment
+      - |
+        cat > deployment/docker-compose.yml << 'EOF'
+        version: '3.8'
+        
+        services:
+          backend-api:
+            image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/prod/migrationai-backend-api:${IMAGE_TAG}
+            container_name: migrationai-backend-api
+            ports:
+              - "3000:3000"
+            environment:
+              - NODE_ENV=production
+              - REDIS_URL=${REDIS_URL}
+              - CONTACTS_QUEUE_URL=${CONTACTS_QUEUE_URL}
+              - PROJECTS_QUEUE_URL=${PROJECTS_QUEUE_URL}
+            restart: unless-stopped
+            networks:
+              - migrationai-network
+        
+          admin-backend:
+            image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/prod/migrationai-admin-backend:${IMAGE_TAG}
+            container_name: migrationai-admin-backend
+            ports:
+              - "3001:3000"
+            environment:
+              - NODE_ENV=production
+              - REDIS_URL=${REDIS_URL}
+            restart: unless-stopped
+            networks:
+              - migrationai-network
+        
+          tfp-service:
+            image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/prod/migrationai-tfp:${IMAGE_TAG}
+            container_name: migrationai-tfp
+            ports:
+              - "3002:3000"
+            environment:
+              - NODE_ENV=production
+              - REDIS_URL=${REDIS_URL}
+            restart: unless-stopped
+            networks:
+              - migrationai-network
+        
+        networks:
+          migrationai-network:
+            driver: bridge
+        EOF
+      
+      # Create environment file
+      - |
+        cat > deployment/.env << 'EOF'
+        AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}
+        AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+        REDIS_URL=redis://your-memorydb-endpoint:6379
+        CONTACTS_QUEUE_URL=https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_ID}/prod-migrationai-contacts
+        PROJECTS_QUEUE_URL=https://sqs.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ACCOUNT_ID}/prod-migrationai-projects
+        EOF
+      
       # Create taskdef.json for ECS (if needed)
       - |
-        cat > taskdef.json << 'EOF'
+        cat > deployment/taskdef.json << 'EOF'
         {
           "family": "migrationai",
           "networkMode": "awsvpc",
@@ -213,10 +279,33 @@ phases:
         EOF
       
       # Create imagedefinitions.json for ECS
-      - printf '[{"name":"migrationai-backend","imageUri":"%s"}]' $REPOSITORY_URI/prod/migrationai-backend-api:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"migrationai-backend","imageUri":"%s"}]' $REPOSITORY_URI/prod/migrationai-backend-api:$IMAGE_TAG > deployment/imagedefinitions.json
+      
+      # Create deployment manifest
+      - |
+        cat > deployment/deployment-manifest.json << 'EOF'
+        {
+          "version": "1.0",
+          "deployment": {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "commit": "${CODEBUILD_RESOLVED_SOURCE_VERSION}",
+            "images": {
+              "backend-api": "${REPOSITORY_URI}/prod/migrationai-backend-api:${IMAGE_TAG}",
+              "admin-backend": "${REPOSITORY_URI}/prod/migrationai-admin-backend:${IMAGE_TAG}",
+              "tfp-service": "${REPOSITORY_URI}/prod/migrationai-tfp:${IMAGE_TAG}",
+              "frontend": "${REPOSITORY_URI}/prod/migrationai-frontend:${IMAGE_TAG}",
+              "admin-frontend": "${REPOSITORY_URI}/prod/migrationai-admin-frontend:${IMAGE_TAG}"
+            },
+            "lambda-workers": [
+              "contacts", "projects", "sections", "notes", "calendar",
+              "tasks", "billing-items", "project-funds", "billing-invoice",
+              "payment", "project-email", "document", "jobs"
+            ]
+          }
+        }
+        EOF
 
 artifacts:
   files:
-    - imagedefinitions.json
-    - appspec.yml
-    - taskdef.json 
+    - deployment/**/*
+  base-directory: deployment 

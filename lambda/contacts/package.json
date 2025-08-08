@@ -1,0 +1,15 @@
+{
+  "name": "migrationai-contacts-worker",
+  "version": "1.0.0",
+  "description": "Contacts processing Lambda worker for MigrationAI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1450.0"
+  },
+  "keywords": ["lambda", "contacts", "migrationai"],
+  "author": "MigrationAI Team",
+  "license": "MIT"
+}
