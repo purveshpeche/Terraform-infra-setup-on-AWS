@@ -157,4 +157,26 @@ output "apprunner_service_urls" {
     frontend       = aws_apprunner_service.frontend.service_url
     admin_frontend = aws_apprunner_service.admin_frontend.service_url
   }
+}
+
+# EC2 Connection Commands
+output "ec2_connection_command_backend" {
+  description = "Command to connect to backend EC2 instance via Systems Manager"
+  value       = "aws ssm start-session --target ${aws_instance.backend.id}"
+}
+
+output "ec2_connection_command_tfp" {
+  description = "Command to connect to TFP EC2 instance via Systems Manager"
+  value       = "aws ssm start-session --target ${aws_instance.tfp.id}"
+}
+
+# CodePipeline Outputs
+output "codepipeline_name" {
+  description = "Name of the CodePipeline"
+  value       = aws_codepipeline.main.name
+}
+
+output "codebuild_project_name" {
+  description = "Name of the CodeBuild project"
+  value       = aws_codebuild_project.lambda_build.name
 } 

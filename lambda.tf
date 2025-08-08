@@ -1,4 +1,4 @@
-# Lambda Functions for MigrationAI Workers
+# Lambda Functions for MigrationAI Workers (Dockerized)
 
 # IAM Role for Lambda Functions
 resource "aws_iam_role" "lambda_role" {
@@ -61,18 +61,27 @@ resource "aws_iam_role_policy" "lambda_policy" {
           aws_sqs_queue.document.arn,
           aws_sqs_queue.jobs.arn
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ]
+        Resource = "*"
       }
     ]
   })
 }
 
-# Lambda Functions
+# Lambda Functions (Dockerized)
 resource "aws_lambda_function" "contacts" {
-  filename      = "lambda_contacts.zip"
   function_name = "migrationai-contacts"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_contacts.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -88,11 +97,10 @@ resource "aws_lambda_function" "contacts" {
 }
 
 resource "aws_lambda_function" "projects" {
-  filename      = "lambda_projects.zip"
   function_name = "migrationai-projects"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_projects.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -108,11 +116,10 @@ resource "aws_lambda_function" "projects" {
 }
 
 resource "aws_lambda_function" "sections" {
-  filename      = "lambda_sections.zip"
   function_name = "migrationai-sections"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_sections.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -128,11 +135,10 @@ resource "aws_lambda_function" "sections" {
 }
 
 resource "aws_lambda_function" "notes" {
-  filename      = "lambda_notes.zip"
   function_name = "migrationai-notes"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_notes.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -148,11 +154,10 @@ resource "aws_lambda_function" "notes" {
 }
 
 resource "aws_lambda_function" "calendar" {
-  filename      = "lambda_calendar.zip"
   function_name = "migrationai-calendar"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_calendar.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -168,11 +173,10 @@ resource "aws_lambda_function" "calendar" {
 }
 
 resource "aws_lambda_function" "tasks" {
-  filename      = "lambda_tasks.zip"
   function_name = "migrationai-tasks"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_tasks.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -188,11 +192,10 @@ resource "aws_lambda_function" "tasks" {
 }
 
 resource "aws_lambda_function" "billing_items" {
-  filename      = "lambda_billing_items.zip"
   function_name = "migrationai-billing-items"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_billing_items.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -208,11 +211,10 @@ resource "aws_lambda_function" "billing_items" {
 }
 
 resource "aws_lambda_function" "project_funds" {
-  filename      = "lambda_project_funds.zip"
   function_name = "migrationai-project-funds"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_project_funds.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -228,11 +230,10 @@ resource "aws_lambda_function" "project_funds" {
 }
 
 resource "aws_lambda_function" "billing_invoice" {
-  filename      = "lambda_billing_invoice.zip"
   function_name = "migrationai-billing-invoice"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_billing_invoice.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -248,11 +249,10 @@ resource "aws_lambda_function" "billing_invoice" {
 }
 
 resource "aws_lambda_function" "payment" {
-  filename      = "lambda_payment.zip"
   function_name = "migrationai-payment"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_payment.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -268,11 +268,10 @@ resource "aws_lambda_function" "payment" {
 }
 
 resource "aws_lambda_function" "project_email" {
-  filename      = "lambda_project_email.zip"
   function_name = "migrationai-project-email"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_project_email.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -288,11 +287,10 @@ resource "aws_lambda_function" "project_email" {
 }
 
 resource "aws_lambda_function" "document" {
-  filename      = "lambda_document.zip"
   function_name = "migrationai-document"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_document.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -308,11 +306,10 @@ resource "aws_lambda_function" "document" {
 }
 
 resource "aws_lambda_function" "jobs" {
-  filename      = "lambda_jobs.zip"
   function_name = "migrationai-jobs"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.worker_jobs.repository_url}:latest"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-  runtime       = "nodejs18.x"
   timeout       = 300
   memory_size   = 512
 
@@ -325,4 +322,83 @@ resource "aws_lambda_function" "jobs" {
   tags = {
     Name = "migrationai-jobs"
   }
+}
+
+# SQS Event Source Mappings for Lambda Triggers
+resource "aws_lambda_event_source_mapping" "contacts_trigger" {
+  event_source_arn = aws_sqs_queue.contacts.arn
+  function_name    = aws_lambda_function.contacts.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "projects_trigger" {
+  event_source_arn = aws_sqs_queue.projects.arn
+  function_name    = aws_lambda_function.projects.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "sections_trigger" {
+  event_source_arn = aws_sqs_queue.sections.arn
+  function_name    = aws_lambda_function.sections.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "notes_trigger" {
+  event_source_arn = aws_sqs_queue.notes.arn
+  function_name    = aws_lambda_function.notes.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "calendar_trigger" {
+  event_source_arn = aws_sqs_queue.calendar.arn
+  function_name    = aws_lambda_function.calendar.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "tasks_trigger" {
+  event_source_arn = aws_sqs_queue.tasks.arn
+  function_name    = aws_lambda_function.tasks.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "billing_items_trigger" {
+  event_source_arn = aws_sqs_queue.billing_items.arn
+  function_name    = aws_lambda_function.billing_items.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "project_funds_trigger" {
+  event_source_arn = aws_sqs_queue.project_funds.arn
+  function_name    = aws_lambda_function.project_funds.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "billing_invoice_trigger" {
+  event_source_arn = aws_sqs_queue.billing_invoice.arn
+  function_name    = aws_lambda_function.billing_invoice.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "payment_trigger" {
+  event_source_arn = aws_sqs_queue.payment.arn
+  function_name    = aws_lambda_function.payment.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "project_email_trigger" {
+  event_source_arn = aws_sqs_queue.project_email.arn
+  function_name    = aws_lambda_function.project_email.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "document_trigger" {
+  event_source_arn = aws_sqs_queue.document.arn
+  function_name    = aws_lambda_function.document.arn
+  enabled          = true
+}
+
+resource "aws_lambda_event_source_mapping" "jobs_trigger" {
+  event_source_arn = aws_sqs_queue.jobs.arn
+  function_name    = aws_lambda_function.jobs.arn
+  enabled          = true
 } 

@@ -4,7 +4,7 @@
 resource "aws_sqs_queue" "dlq_contacts" {
   name = "dlq-prod-migrationai-contacts"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -17,7 +17,7 @@ resource "aws_sqs_queue" "dlq_contacts" {
 resource "aws_sqs_queue" "dlq_projects" {
   name = "dlq-prod-migrationai-projects"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -30,7 +30,7 @@ resource "aws_sqs_queue" "dlq_projects" {
 resource "aws_sqs_queue" "dlq_sections" {
   name = "dlq-prod-migrationai-sections"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -43,7 +43,7 @@ resource "aws_sqs_queue" "dlq_sections" {
 resource "aws_sqs_queue" "dlq_notes" {
   name = "dlq-prod-migrationai-notes"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -56,7 +56,7 @@ resource "aws_sqs_queue" "dlq_notes" {
 resource "aws_sqs_queue" "dlq_calendar" {
   name = "dlq-prod-migrationai-calendar"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -69,7 +69,7 @@ resource "aws_sqs_queue" "dlq_calendar" {
 resource "aws_sqs_queue" "dlq_tasks" {
   name = "dlq-prod-migrationai-tasks"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -82,7 +82,7 @@ resource "aws_sqs_queue" "dlq_tasks" {
 resource "aws_sqs_queue" "dlq_billing_items" {
   name = "dlq-prod-migrationai-billing-items"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -95,7 +95,7 @@ resource "aws_sqs_queue" "dlq_billing_items" {
 resource "aws_sqs_queue" "dlq_project_funds" {
   name = "dlq-prod-migrationai-project-funds"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -108,7 +108,7 @@ resource "aws_sqs_queue" "dlq_project_funds" {
 resource "aws_sqs_queue" "dlq_billing_invoice" {
   name = "dlq-prod-migrationai-billing-invoice"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -121,7 +121,7 @@ resource "aws_sqs_queue" "dlq_billing_invoice" {
 resource "aws_sqs_queue" "dlq_payment" {
   name = "dlq-prod-migrationai-payment"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -134,7 +134,7 @@ resource "aws_sqs_queue" "dlq_payment" {
 resource "aws_sqs_queue" "dlq_project_email" {
   name = "dlq-prod-migrationai-project-email"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -147,7 +147,7 @@ resource "aws_sqs_queue" "dlq_project_email" {
 resource "aws_sqs_queue" "dlq_document" {
   name = "dlq-prod-migrationai-document"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -160,7 +160,7 @@ resource "aws_sqs_queue" "dlq_document" {
 resource "aws_sqs_queue" "dlq_jobs" {
   name = "dlq-prod-migrationai-jobs"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -174,7 +174,7 @@ resource "aws_sqs_queue" "dlq_jobs" {
 resource "aws_sqs_queue" "contacts" {
   name = "prod-migrationai-contacts"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -192,7 +192,7 @@ resource "aws_sqs_queue" "contacts" {
 resource "aws_sqs_queue" "projects" {
   name = "prod-migrationai-projects"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -210,7 +210,7 @@ resource "aws_sqs_queue" "projects" {
 resource "aws_sqs_queue" "sections" {
   name = "prod-migrationai-sections"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -228,7 +228,7 @@ resource "aws_sqs_queue" "sections" {
 resource "aws_sqs_queue" "notes" {
   name = "prod-migrationai-notes"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -246,7 +246,7 @@ resource "aws_sqs_queue" "notes" {
 resource "aws_sqs_queue" "calendar" {
   name = "prod-migrationai-calendar"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -264,7 +264,7 @@ resource "aws_sqs_queue" "calendar" {
 resource "aws_sqs_queue" "tasks" {
   name = "prod-migrationai-tasks"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -282,7 +282,7 @@ resource "aws_sqs_queue" "tasks" {
 resource "aws_sqs_queue" "billing_items" {
   name = "prod-migrationai-billing-items"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -300,7 +300,7 @@ resource "aws_sqs_queue" "billing_items" {
 resource "aws_sqs_queue" "project_funds" {
   name = "prod-migrationai-project-funds"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -318,7 +318,7 @@ resource "aws_sqs_queue" "project_funds" {
 resource "aws_sqs_queue" "billing_invoice" {
   name = "prod-migrationai-billing-invoice"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -336,7 +336,7 @@ resource "aws_sqs_queue" "billing_invoice" {
 resource "aws_sqs_queue" "payment" {
   name = "prod-migrationai-payment"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -354,7 +354,7 @@ resource "aws_sqs_queue" "payment" {
 resource "aws_sqs_queue" "project_email" {
   name = "prod-migrationai-project-email"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -372,7 +372,7 @@ resource "aws_sqs_queue" "project_email" {
 resource "aws_sqs_queue" "document" {
   name = "prod-migrationai-document"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144
@@ -390,7 +390,7 @@ resource "aws_sqs_queue" "document" {
 resource "aws_sqs_queue" "jobs" {
   name = "prod-migrationai-jobs"
 
-  visibility_timeout_seconds = 30
+  visibility_timeout_seconds = 120
   message_retention_seconds  = 1209600
   delay_seconds              = 0
   max_message_size           = 262144

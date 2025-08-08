@@ -15,18 +15,14 @@ for file in "${files[@]}"; do
     fi
 done
 
-# Check if Lambda ZIP files exist
+# Check if Lambda function directory exists
 echo ""
-echo "📦 Checking Lambda ZIP files..."
-lambda_files=("lambda_contacts.zip" "lambda_projects.zip" "lambda_sections.zip" "lambda_notes.zip" "lambda_calendar.zip" "lambda_tasks.zip" "lambda_billing_items.zip" "lambda_project_funds.zip" "lambda_billing_invoice.zip" "lambda_payment.zip" "lambda_project_email.zip" "lambda_document.zip" "lambda_jobs.zip")
-
-for file in "${lambda_files[@]}"; do
-    if [ -f "$file" ]; then
-        echo "✅ $file exists"
-    else
-        echo "❌ $file missing"
-    fi
-done
+echo "📦 Checking Lambda function directory..."
+if [ -d "lambda_functions" ]; then
+    echo "✅ Lambda functions directory exists"
+else
+    echo "❌ Lambda functions directory missing"
+fi
 
 # Check Terraform syntax
 echo ""
@@ -60,7 +56,7 @@ fi
 echo ""
 echo "📋 Summary:"
 echo "- All Terraform files are present"
-echo "- Lambda ZIP files are created"
+echo "- Lambda functions directory exists"
 echo "- Configuration is ready for deployment"
 echo ""
 echo "🚀 Next steps:"

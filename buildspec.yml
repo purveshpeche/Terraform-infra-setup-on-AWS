@@ -1,0 +1,222 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker images...
+      
+      # Build and push Lambda worker images
+      - echo Building contacts worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-contacts:$IMAGE_TAG ./lambda/contacts/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-contacts:$IMAGE_TAG
+      
+      - echo Building projects worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-projects:$IMAGE_TAG ./lambda/projects/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-projects:$IMAGE_TAG
+      
+      - echo Building sections worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-sections:$IMAGE_TAG ./lambda/sections/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-sections:$IMAGE_TAG
+      
+      - echo Building notes worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-notes:$IMAGE_TAG ./lambda/notes/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-notes:$IMAGE_TAG
+      
+      - echo Building calendar worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-calendar:$IMAGE_TAG ./lambda/calendar/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-calendar:$IMAGE_TAG
+      
+      - echo Building tasks worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-tasks:$IMAGE_TAG ./lambda/tasks/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-tasks:$IMAGE_TAG
+      
+      - echo Building billing-items worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-billing-items:$IMAGE_TAG ./lambda/billing-items/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-billing-items:$IMAGE_TAG
+      
+      - echo Building project-funds worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-project-funds:$IMAGE_TAG ./lambda/project-funds/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-project-funds:$IMAGE_TAG
+      
+      - echo Building billing-invoice worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-billing-invoice:$IMAGE_TAG ./lambda/billing-invoice/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-billing-invoice:$IMAGE_TAG
+      
+      - echo Building payment worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-payment:$IMAGE_TAG ./lambda/payment/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-payment:$IMAGE_TAG
+      
+      - echo Building project-email worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-project-email:$IMAGE_TAG ./lambda/project-email/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-project-email:$IMAGE_TAG
+      
+      - echo Building document worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-document:$IMAGE_TAG ./lambda/document/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-document:$IMAGE_TAG
+      
+      - echo Building jobs worker...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-worker-jobs:$IMAGE_TAG ./lambda/jobs/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-jobs:$IMAGE_TAG
+      
+      # Build and push backend services
+      - echo Building backend API...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-backend-api:$IMAGE_TAG ./backend/api/
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-api:$IMAGE_TAG
+      
+      - echo Building admin backend...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-admin-backend:$IMAGE_TAG ./backend/admin/
+      - docker push $REPOSITORY_URI/prod/migrationai-admin-backend:$IMAGE_TAG
+      
+      - echo Building TFP service...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-tfp:$IMAGE_TAG ./backend/tfp/
+      - docker push $REPOSITORY_URI/prod/migrationai-tfp:$IMAGE_TAG
+      
+      # Build and push frontend services
+      - echo Building frontend...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-frontend:$IMAGE_TAG ./frontend/
+      - docker push $REPOSITORY_URI/prod/migrationai-frontend:$IMAGE_TAG
+      
+      - echo Building admin frontend...
+      - docker build -t $REPOSITORY_URI/prod/migrationai-admin-frontend:$IMAGE_TAG ./frontend/admin/
+      - docker push $REPOSITORY_URI/prod/migrationai-admin-frontend:$IMAGE_TAG
+      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the latest images...
+      
+      # Tag images as latest
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-contacts:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-contacts:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-contacts:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-projects:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-projects:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-projects:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-sections:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-sections:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-sections:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-notes:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-notes:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-notes:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-calendar:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-calendar:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-calendar:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-tasks:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-tasks:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-tasks:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-billing-items:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-billing-items:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-billing-items:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-project-funds:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-project-funds:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-project-funds:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-billing-invoice:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-billing-invoice:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-billing-invoice:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-payment:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-payment:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-payment:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-project-email:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-project-email:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-project-email:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-document:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-document:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-document:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-worker-jobs:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-worker-jobs:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-worker-jobs:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-backend-api:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-backend-api:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-backend-api:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-admin-backend:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-admin-backend:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-admin-backend:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-tfp:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-tfp:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-tfp:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-frontend:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-frontend:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-frontend:latest
+      
+      - docker tag $REPOSITORY_URI/prod/migrationai-admin-frontend:$IMAGE_TAG $REPOSITORY_URI/prod/migrationai-admin-frontend:latest
+      - docker push $REPOSITORY_URI/prod/migrationai-admin-frontend:latest
+      
+      # Create deployment files for different targets
+      - echo Creating deployment files...
+      
+      # Create appspec.yml for CodeDeploy (EC2)
+      - |
+        cat > appspec.yml << 'EOF'
+        version: 0.0
+        os: linux
+        files:
+          - source: /
+            destination: /opt/migrationai/
+        hooks:
+          BeforeInstall:
+            - location: scripts/before_install.sh
+              timeout: 300
+              runas: root
+          AfterInstall:
+            - location: scripts/after_install.sh
+              timeout: 300
+              runas: root
+          ApplicationStart:
+            - location: scripts/start_application.sh
+              timeout: 300
+              runas: root
+          ApplicationStop:
+            - location: scripts/stop_application.sh
+              timeout: 300
+              runas: root
+        EOF
+      
+      # Create taskdef.json for ECS (if needed)
+      - |
+        cat > taskdef.json << 'EOF'
+        {
+          "family": "migrationai",
+          "networkMode": "awsvpc",
+          "requiresCompatibilities": ["FARGATE"],
+          "cpu": "256",
+          "memory": "512",
+          "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskExecutionRole",
+          "containerDefinitions": [
+            {
+              "name": "migrationai-backend",
+              "image": "${REPOSITORY_URI}/prod/migrationai-backend-api:${IMAGE_TAG}",
+              "portMappings": [
+                {
+                  "containerPort": 3000,
+                  "protocol": "tcp"
+                }
+              ],
+              "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                  "awslogs-group": "/ecs/migrationai",
+                  "awslogs-region": "${AWS_DEFAULT_REGION}",
+                  "awslogs-stream-prefix": "ecs"
+                }
+              }
+            }
+          ]
+        }
+        EOF
+      
+      # Create imagedefinitions.json for ECS
+      - printf '[{"name":"migrationai-backend","imageUri":"%s"}]' $REPOSITORY_URI/prod/migrationai-backend-api:$IMAGE_TAG > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
+    - appspec.yml
+    - taskdef.json 
